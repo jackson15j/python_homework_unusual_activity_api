@@ -58,3 +58,49 @@ Expected Codes:
     curl -XPOST http://127.0.0.1:5000/event -H 'Content-Type: application/json' \
          -d '{"type": "deposit", "amount": "42.00", "user_id": 1, "t": 0}'
   #+END_EXAMPLE
+
+** Pre-Thoughts:
+
+- Business logic separated from endpoint framework:
+  - Unittest business logic.
+  - Validate each requirement in isolation.
+  - Maintain state (DB (/potentially/ sqlite for ease).
+- Contract Boundary testing of the endpoint:
+  - Pro's:
+    - Real World: Contract's enforce hard-boundaries, upfront
+      design/collaboration, parallelisation of implementation,
+      code/test generation, VCS-based tooling.
+    - Test Generation by: [[https://specmatic.in/documentation.html][Specmatic]], [[https://dredd.org/en/latest/index.html][Dredd]] is a time-saver vs bespoke
+      integration test writing.
+      - Personally like Specmatic for it's test generation that can be
+        supplemented with OpenAPI spec =examples= and/or [[https://cucumber.io/docs/gherkin/][Gherkin]]
+        tests.
+      - [[https://docs.pact.io/consumer][PACT]] consumer-driven testing would require writing bespoke
+        tests + a broker. Overkill for this single Server exercise,
+        but a fine test if you had bespoke API endpoint tests and
+        wanted to pull in the PACT library as a trial of the PACT
+        Broker.
+  - Con's:
+    - Test Generation is a greater productivity boost when you use
+      code generation of Server/Client endpoints + Models.
+      - Sadly, python code generation is still poor, where the output
+        requires heavy templating and post-generation cleanup to allow
+        seamless regeneration (Compare: Golang's [[https://github.com/deepmap/oapi-codegen/][Github:
+        deepmap/oapi-codegen/]] vs Golang/Python/etc's [[https://github.com/swagger-api/swagger-codegen][Github:
+        swagger-api/swagger-codegen]] output).
+        - Easy to fall into the trap of:
+          - Generate once, move spec to be generated from Producer's
+            code/docstrings, Producer implementation is now a gate for
+            Consumers/tooling/generative-testing to start.
+          - Duplication from Code and Spec being kept in sync.
+      - Spec writing + docker/CI setup for Specmatic is non-trivial
+        and probably too much work for a quick homework project.
+  - Not a fan of mocking API routing to avoid running up the Server
+    for testing. Seen (and had to educate) too many Teams that have
+    over-mocked the routing (ie. Self-contained tests that validate
+    the mock state and not Production code).
+- Release:
+  - *MVP:* Steps to run `python <server.py>`.
+  - *Next:* Python package to be installed into a venv, and then run.
+  - *Ideal:* Docker container with running app as entrypoint.
+  - *Ideal:* Github CI actions (lint, build, test, etc).
