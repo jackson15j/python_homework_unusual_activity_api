@@ -1,0 +1,60 @@
+* Unusual Activity API:
+Simple to project to expose an endpoint to highlight unusual activity.
+
+** Problem:
+
+creating an endpoint which will receive a payload representing a
+user's action. This endpoint should be called =/event= and can expect
+the following payload:
+
+#+BEGIN_EXAMPLE json
+  {
+    "type": "deposit",
+    "amount": "42.00",
+    "user_id": 1,
+    "t": 10
+  }
+#+END_EXAMPLE
+
+- =type= is either =deposit= or =withdraw=.
+- =user_id= represents a unique user.
+- =t= denotes the second we receive the payload, this will always be
+  increasing and unique.
+
+The endpoint should respond as follows:
+
+#+BEGIN_EXAMPLE json
+  {
+    "alert": true,
+    "alert_codes": [
+      30,
+      123
+    ],
+    "user_id": 1
+  }
+#+END_EXAMPLE
+
+Given the following set of rules;
+
+- If the user meets these criteria, add the code to the =alert_codes=.
+- If =alert_codes= is empty, =alert= should be =false=, otherwise
+  =true=.
+- =alert_codes= can be provided in any order.
+- Always provide the =user_id= in the response payload.
+
+Expected Codes:
+
+- Code: =1100=: A withdraw amount over 100.
+- Code: =30=: 3 consecutive withdraws.
+- Code: =300=: 3 consecutive increasing deposits (ignoring withdraws).
+- Code: =123=: Accumulative deposit amount over a window of 30 seconds
+  is over 200.
+
+** Usage:
+
+- Curl Example:
+
+  #+BEGIN_EXAMPLE shell
+    curl -XPOST http://127.0.0.1:5000/event -H 'Content-Type: application/json' \
+         -d '{"type": "deposit", "amount": "42.00", "user_id": 1, "t": 0}'
+  #+END_EXAMPLE
