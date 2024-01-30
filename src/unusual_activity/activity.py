@@ -36,7 +36,7 @@ def is_consecutive_withdrawls(user_id: int) -> bool:
     raise NotImplementedError
 
 
-def is_consecutive_increasing_withdrawls(user_id: int) -> bool:
+def is_consecutive_increasing_deposits(user_id: int) -> bool:
     raise NotImplementedError
 
 

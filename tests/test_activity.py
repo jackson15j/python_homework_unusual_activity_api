@@ -9,7 +9,7 @@ from src.unusual_activity.activity import (
     get_alert_state,
     is_withdrawl_ammount_excessive,
     is_consecutive_withdrawls,
-    is_consecutive_increasing_withdrawls,
+    is_consecutive_increasing_deposits,
     is_excessive_deposit_ammount_in_period,
 )
 
@@ -40,7 +40,7 @@ class TestActivityBusinessLogic:
     def test_is_consecutive_withdrawls(self):
         pass
 
-    def test_is_consecutive_increasing_withdrawls(self):
+    def test_is_consecutive_increasing_deposits(self):
         pass
 
     def test_is_excessive_deposit_ammount_in_period(self):
