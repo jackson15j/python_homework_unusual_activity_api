@@ -65,6 +65,14 @@ Expected Codes:
   - Unittest business logic.
   - Validate each requirement in isolation.
   - Maintain state (DB (/potentially/ sqlite for ease).
+- Code Flow:
+  - Parse Request.
+  - /Potentially:/ early validation. eg. unique =t= values.
+  - Store request history by =user_id=.
+  - Get all data by =user_id=.
+  - Run each check.
+  - Collate =alert_codes=, if any.
+  - Generate Response.
 - Contract Boundary testing of the endpoint:
   - Pro's:
     - Real World: Contract's enforce hard-boundaries, upfront
