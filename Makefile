@@ -42,6 +42,12 @@ install-test-deps:
 		pip install .[test]; \
 	)
 
+dev-setup: create-dev-venv install-build-deps install-lint-deps install-test-deps
+	@( \
+		. .venv-dev/bin/activate; \
+		pip install .; \
+	)
+
 lint:
 	@( \
 		. .venv-dev/bin/activate; \
@@ -79,5 +85,5 @@ semantic-release:
 run-dev:
 	@( \
 		. .venv-dev/bin/activate; \
-		python -m src.tree_search.main \
+		python -m flask --app src/unusual_activity/main run \
 	)
