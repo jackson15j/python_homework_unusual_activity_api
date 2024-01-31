@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_VERSION: ""
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create .venv
+        run: make create-dev-venv
+      - name: Deps - Install build dependencies
+        run: make install-build-deps
+      - name: Build - Python Package
+        run: make build
+
+      - name: Semantic Release
+        run: |
+          make semantic-release
+          if test -f .RELEASE_VERSION; then
+            release_version="$(cat .RELEASE_VERSION)"
+            echo "RELEASE_VERSION=$release_version" >> $GITHUB_ENV
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "dist/*.*"
+          # Don't mess with Name/Description set by Semantic Release step.
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          tag: ${{ env.RELEASE_VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}

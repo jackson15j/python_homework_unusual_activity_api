@@ -1,0 +1,138 @@
+[project]
+name = "unusual_activity"
+dynamic = ["version"]
+license = {file = "LICENSE"}
+authors = [
+  { name="Craig Astill", email="craigastill@gmail.com" },
+]
+description = "Simple to project to expose an endpoint to highlight unusual activity."
+requires-python = ">=3.12"
+keywords = ["account", "withdrawl", "deposit"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/jackson15j/python_homework_unusual_activity_api"
+"Bug Tracker" = "https://github.com/jackson15j/python_homework_unusual_activity_api/issues"
+
+[project.optional-dependencies]
+build = [
+    "build >= 1.0.3",
+]
+lint = [
+    "ruff >= v0.1.11",
+]
+test = [
+    "pytest >= 7.4.4",
+    "pytest-cov >= 4.1.0",
+    "pytest-html >= 4.1.1",
+]
+
+[project.scripts]
+solution_get = "src.unusual_activity.main:main"
+
+[build-system]
+requires = ["setuptools>=69", "setuptools_scm[toml]>=8"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+# Version number construction and guessing based off most recent tag is done
+# with the following config. Going with a simple dev format, instead of the
+# opinonated versioning based off branches (which would be more useful on a
+# Release/Feature managed product.
+# See: https://github.com/pypa/setuptools_scm#version-number-construction.
+local_scheme = 'no-local-version'
+version_scheme = 'no-guess-dev'
+
+[tool.setuptools.dynamic]
+# Config for dynamic versioning from last Git tag. See:
+# https://github.com/pypa/setuptools_scm/
+version = { attr = "setuptools_scm.get_version" }
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+# Same as Black.
+line-length = 82
+indent-width = 4
+
+# Assume Python 3.8
+target-version = "py38"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+
+[tool.pytest.ini_options]
+# Directories that are not visited by pytest collector:
+norecursedirs = [
+  "*.egg",
+  ".eggs",
+  "dist",
+  "build"
+]
+junit_suite_name = "tests"
+junit_logging = "all"
+junit_family = "xunit2"
+python_files = [
+    "test_*.py",
+    "*_test.py",
+    "tests.py"
+]
+# Report coverage and test output in JUnit format for CI to display, as well as
+# a human readable HTML.
+# Also dump 10 slowest tests on CLI runs for local debugging.
+addopts = "-vv -ra --durations=10 --junitxml=build/test-reports/py_unittests.xml --html=build/test-reports/py_unittests.html --self-contained-html"
