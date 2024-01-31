@@ -13,6 +13,9 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dependencies = [
+  "flask >= 3.0.1",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/jackson15j/python_homework_unusual_activity_api"
