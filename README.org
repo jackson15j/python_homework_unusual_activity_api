@@ -112,3 +112,110 @@ Expected Codes:
   - *Next:* Python package to be installed into a venv, and then run.
   - *Ideal:* Docker container with running app as entrypoint.
   - *Ideal:* Github CI actions (lint, build, test, etc).
+
+
+** Proposed Data Structures:
+
+*** Account History + User Accounts:
+
+#+NAME: AccountHistory_JSON
+#+BEGIN_EXAMPLE json
+  {
+    <t>: {user_id: <int>, type: <deposit/withdrawl>, amount: <float>},
+  }
+#+END_EXAMPLE
+
+#+NAME: UserAccounts_JSON
+#+BEGIN_EXAMPLE json
+  {
+    <user_id>: {last_t: <t>, total: <float>},
+  }
+#+END_EXAMPLE
+
+- Pro's:
+  - =t in AccountHistory= check for =t= uniqueness.
+  - =t > list(AccountHistory.keys())[-1]= for increasing check.
+  - Separate =UserAccounts= for quick lookups + deposit/withdrawl
+    changes.
+  - Tracking of =last_t= for quick checking for missed transactions.
+- Con's:
+  - Messy to look up by =User_id= in =AccountHistory= for historical
+    checks.
+
+*** Nested User Accounts:
+
+#+BEGIN_EXAMPLE json
+  {
+    <user_id>: {
+      last_t: <t>,
+      total: <float>,
+      history/audit: [{t: <int>, type: <deposit/withdrawl>, amount: <float>}, ]
+    },
+  }
+#+END_EXAMPLE
+
+Plus separate global ~last_t = <int>~ in Request Handler.
+
+- Pro's:
+  - =t > last_t= for increasing check.
+  - =user_id= as a key for initial uniqueness checks.
+  - Quickly apply deposit/withdrawl changes.
+  - Tracking of =last_t= for quick checking for missed transactions.
+  - Historical checks are easier to do than [[*Account History + User Accounts:][Account History + User
+    Accounts]], because of the tight data coupling.
+- Con's:
+  - Assumption that =t= is unique if it passes the =t > last_t= global
+    check.
+  - global =last_t= shortcomings:
+    - Would need a singleton to handle concurrent requests.
+    - Would need to dump to DB to handle reboots.
+    - Use DB/library/ServiceMesh/Service to centralise logic in a
+      horizontally scaled situation.
+  - The audit history should be split into a separate data structure
+    to handle it's continuous growth, vs the rest of the user account
+    fields.
+
+*** SQL Tables:
+
+#+BEGIN_EXAMPLE sql
+  CREATE TABLE AuditHistory (
+         T int NOT NULL UNIQUE,
+         UserId int NOT NULL,
+         Type varchar(20),
+         Ammount float,
+         CONSTRAINT CHK_Type CHECK (Type='deposit' OR Type='withdrawl'),
+         PRIMARY KEY (T),
+         FOREIGN KEY (UserId) REFERENCES UserAccount(UserId)
+  );
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE sql
+  CREATE TABLE UserAccount (
+         UserId int NOT NULL UNIQUE,
+         Total float,
+         PRIMARY KEY (UserId)
+  );
+#+END_EXAMPLE
+
+- Pro's:
+  - Constraints at the DB level centralises logic:
+    - Simplified Application logic due to reacting to DB Errors only.
+    - Validation maintained when transitioning Application language.
+    - Centralised logic is ideal for shared DB's.
+    - Validation is still in place for any direct DB modifications.
+  - =SELECT T FROM AuditHistory WHERE T < :t ORDER BY
+    insertion_timestamp DESC LIMIT 1;= for increasing check.
+    - Can use the SQL engines get last row equivalent, as an optimisation.
+    - With a bit more thinking this could be an SQL constraint that
+      checks the last value.
+      - Did a little digging and this can be done with a =BEFORE
+        INSERT= Trigger, to create a custom constraint.
+  - =SELECT * FROM AuditHistory WHERE UserId == :user_id ORDER BY T=
+    to get data for uniqueness checks.
+- Con's:
+  - Need to Duplicate validation up the stack if you want to reduce
+    latency / DB-hits.
+    - Same argument as FrontEnd Validation vs Reacting to Backend
+      Validation.
+  - Opaque behaviour from Application code point of view - requires
+    good documentation and/or SQL literacy.
