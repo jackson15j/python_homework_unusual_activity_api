@@ -28,7 +28,7 @@ def get_alert_state(alert_codes: list[int]) -> bool:
     return True if alert_codes else False
 
 
-def is_withdrawl_ammount_excessive(ammount: float) -> bool:
+def is_withdrawl_amount_excessive(amount: float) -> bool:
     raise NotImplementedError
 
 
@@ -40,10 +40,18 @@ def is_consecutive_increasing_deposits(user_id: int) -> bool:
     raise NotImplementedError
 
 
-def is_excessive_deposit_ammount_in_period(
+def is_excessive_deposit_amount_in_period(
         user_id: int,
         period_seconds: int = EXCESSIVE_DEPOSIT_PERIOD_SECONDS
 ) -> bool:
     raise NotImplementedError
 
 
+# Gluing it all together:
+def get_user_data(user_id: int) -> dict:
+    # TODO: DB lookup for all entries with `user_id`.
+    raise NotImplementedError
+
+def collate_alert_codes(user_data: dict) -> list[int]:
+    # TODO: call each validation function.
+    raise NotImplementedError

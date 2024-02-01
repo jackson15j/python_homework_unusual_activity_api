@@ -7,12 +7,16 @@ from src.unusual_activity.activity import (
     _convert_str_to_float,
     # Business Logic Validation:
     get_alert_state,
-    is_withdrawl_ammount_excessive,
+    is_withdrawl_amount_excessive,
     is_consecutive_withdrawls,
     is_consecutive_increasing_deposits,
-    is_excessive_deposit_ammount_in_period,
+    is_excessive_deposit_amount_in_period,
 )
 
+
+AUDIT_DATA = {
+    
+}
 
 class TestPayload:
     def test_is_user_id_unique(self):
@@ -34,7 +38,7 @@ class TestActivityBusinessLogic:
     def test_get_alert_state(self):
         pass
 
-    def test_is_withdrawl_ammount_excessive(self):
+    def test_is_withdrawl_amount_excessive(self):
         pass
 
     def test_is_consecutive_withdrawls(self):
@@ -43,6 +47,6 @@ class TestActivityBusinessLogic:
     def test_is_consecutive_increasing_deposits(self):
         pass
 
-    def test_is_excessive_deposit_ammount_in_period(self):
+    def test_is_excessive_deposit_amount_in_period(self):
         pass
 

@@ -182,7 +182,7 @@ Plus separate global ~last_t = <int>~ in Request Handler.
          T int NOT NULL UNIQUE,
          UserId int NOT NULL,
          Type varchar(20),
-         Ammount float,
+         Amount float,
          CONSTRAINT CHK_Type CHECK (Type='deposit' OR Type='withdrawl'),
          PRIMARY KEY (T),
          FOREIGN KEY (UserId) REFERENCES UserAccount(UserId)
