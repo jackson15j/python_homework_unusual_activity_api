@@ -95,7 +95,7 @@ def create_app(event_store: EventStore):
         # LAST_T = _t
 
         ## Stateless validation checks:
-        if _has_excessive_withdrawal_amount(amount):
+        if _has_excessive_withdrawal_amount(req):
             alert_codes.append(CODE_EXCESSIVE_WITHDRAWAL_AMOUNT)
 
         ## Stateful validation checks:
@@ -126,7 +126,9 @@ def create_app(event_store: EventStore):
 
 
 
-def _has_excessive_withdrawal_amount(amount: str) -> bool:
+def _has_excessive_withdrawal_amount(req: request) -> bool:
+    if req["type"] != "withdrawal":
+        return False
     # Validate excessive withdrawal amount:
-    _amount = float(amount)
+    _amount = float(req["amount"])
     return _amount > EXCESSIVE_WITHDRAWAL_AMOUNT
