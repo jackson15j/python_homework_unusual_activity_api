@@ -85,5 +85,5 @@ semantic-release:
 run-dev:
 	@( \
 		. .venv-dev/bin/activate; \
-		python -m flask --app src/unusual_activity/main run \
+		python -m flask --app src/unusual_activity/app.py run \
 	)
