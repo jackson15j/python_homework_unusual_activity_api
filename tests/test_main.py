@@ -187,26 +187,26 @@ class TestMain:
         assert response.status_code == 200
         assert json.loads(response.data) == exp_dict
 
-    # def test_multiple_alerts(self, client):
-    #     # Trigger: CODE_CONSECUTIVE_INCREASING_DEPOSITS
-    #     # Trigger: CODE_EXCESSIVE_DEPOSIT_AMOUNT_IN_PERIOD
-    #     data = {
-    #         "type": "deposit",
-    #         "amount": f"{EXCESSIVE_DEPOSIT_AMOUNT}",
-    #         "user_id": 1,
-    #         "t": 1
-    #     }
-    #     assert client.post("/event", json=data).status_code == 200
-    #     data["t"] = 2
-    #     data["amount"] = f"{EXCESSIVE_DEPOSIT_AMOUNT + 2}"
-    #     assert client.post("/event", json=data).status_code == 200
-    #     data["t"] = 3
-    #     data["amount"] = f"{EXCESSIVE_DEPOSIT_AMOUNT + 3}"
-    #     response = client.post("/event", json=data).status_code
-    #     assert response.status_code == 200
-    #     _alert_codes = json.loads(response.data)["alert_codes"]
-    #     assert CODE_CONSECUTIVE_INCREASING_DEPOSITS in _alert_codes
-    #     assert CODE_EXCESSIVE_DEPOSIT_AMOUNT_IN_PERIOD in _alert_codes
+    def test_multiple_alerts(self, client):
+        # Trigger: CODE_CONSECUTIVE_INCREASING_DEPOSITS
+        # Trigger: CODE_EXCESSIVE_DEPOSIT_AMOUNT_IN_PERIOD
+        data = {
+            "type": "deposit",
+            "amount": f"{EXCESSIVE_DEPOSIT_AMOUNT}",
+            "user_id": 1,
+            "t": 1
+        }
+        assert client.post("/event", json=data).status_code == 200
+        data["t"] = 2
+        data["amount"] = f"{EXCESSIVE_DEPOSIT_AMOUNT + 2}"
+        assert client.post("/event", json=data).status_code == 200
+        data["t"] = 3
+        data["amount"] = f"{EXCESSIVE_DEPOSIT_AMOUNT + 3}"
+        response = client.post("/event", json=data)
+        assert response.status_code == 200
+        _alert_codes = json.loads(response.data)["alert_codes"]
+        assert CODE_CONSECUTIVE_INCREASING_DEPOSITS in _alert_codes
+        assert CODE_EXCESSIVE_DEPOSIT_AMOUNT_IN_PERIOD in _alert_codes
 
     # @pytest.mark.parametrize(
     #     "msg,data,exp_code", (
