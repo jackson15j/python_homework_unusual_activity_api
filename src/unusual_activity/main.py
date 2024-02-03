@@ -1,3 +1,8 @@
+"""Entrypoint into the Unusual Activity Application.
+
+Exposes an `/event` endpoint that can be sent deposit/withdrawal events
+to. See: `README.org` for the requirements around validation.
+"""
 import json
 
 from src.unusual_activity.constants import (
@@ -51,16 +56,31 @@ class EventRequest(BaseModel):
 
 
 class EventStore:
+    """In-memory store of events + boolean functions for each of the
+    required stateful validations.
+
+    TODO: FUTURE REFACTORING
+
+    - Move Class out to it's own file
+      (eg. `event_store/in_memory.py::InMemory`).
+    - Create interface class with abstract methods
+      (eg. `event_store/ievent_store.py::IEventStore`)
+    - Update the EventStore to inherit the interface.
+    - Move test logic into a base class and use inheritance to avoid
+      duplication when testing each EventStore implementation.
+      (eg. `TestInMemory(BaseEventStore)`).
+    - Create a DB-backed EventStore
+      (eg. `event_store/sqlite.py::Sqlite`).
+    """
     def __init__(self):
         self.db = []
 
-    def reset(self):
-        self.db = []
-
     def add_event(self, event: dict) -> None:
+        """Store Event."""
         self.db.append(event)
 
     def has_consecutive_withdrawals(self, user_id: int) -> bool:
+        """Returns True if consecutive withdrawals threshold is met."""
         # TODO: Refactor reduce the number of passes to get the list
         # of <CONSECUTIVE_WITHDRAWALS> to focus on!
         user_recs = [x for x in self.db if x["user_id"] == user_id]
@@ -69,6 +89,9 @@ class EventStore:
         return bool(len(last_recs) >= CONSECUTIVE_WITHDRAWALS)
 
     def has_consecutive_increasing_deposits(self, user_id: int) -> bool:
+        """Returns True if consecutive increasing deposits threshold is
+        met, ignoring withdrawals.
+        """
         # TODO: Refactor reduce the number of passes to get the list
         # of <CONSECUTIVE_INCREASING_DEPOSITS> to focus on!
         user_recs = [x for x in self.db if x["user_id"] == user_id]
@@ -88,6 +111,9 @@ class EventStore:
         return True
 
     def has_excessive_deposit_amount_in_period(self, user_id: int) -> bool:
+        """Returns True if excessive deposit amount threshold, during
+        period, is met.
+        """
         last_t = self.db[-1]["t"]
         first_t = 0
         if last_t - EXCESSIVE_DEPOSIT_PERIOD_SECONDS > 0:
@@ -101,11 +127,15 @@ class EventStore:
         return bool(total_deposit > EXCESSIVE_DEPOSIT_AMOUNT)
 
 
-def create_app(event_store: EventStore):
+def create_app(event_store: EventStore) -> Flask:
+    """Create Flask application with the passed in EventStore.
+
+    :param EventStore event_store: Data store of events to add to and
+        query.
+    :returns: flask.Flask() app instance.
+    """
 
     app = Flask(__name__)
-
-    LAST_T = 0
 
     @app.errorhandler(ValidationError)
     def handle_validation_errors(e):
@@ -126,18 +156,8 @@ def create_app(event_store: EventStore):
         EventRequest(**req)
 
         alert_codes = []
+        # Store state.
         event_store.add_event(req)
-
-        # # Validate body. Return 400 on missing required key from body.
-        amount = req["amount"]
-
-        # # Validate `t` is increasing between requests.
-        # _t = int(t)
-        # global LAST_T  # TODO: move away from `global` for global tracking!
-        # if _t <= LAST_T:
-        #     # t needs to increase each request!
-        #     abort(400)
-        # LAST_T = _t
 
         ## Stateless validation checks:
         if _has_excessive_withdrawal_amount(req):
@@ -153,18 +173,13 @@ def create_app(event_store: EventStore):
         if event_store.has_excessive_deposit_amount_in_period(req["user_id"]):
             alert_codes.append(CODE_EXCESSIVE_DEPOSIT_AMOUNT_IN_PERIOD)
 
-        # TODO: Parse JSON body.
-        # TODO: Minor: Return 201 on POST success.
-        # TODO: Business Logic validation.
-        # TODO: Generate Response.
-
-
-
+        ## Response Generation:
         ret_val = {
             "alert": bool(alert_codes),
             "alert_codes": alert_codes,
             "user_id": req["user_id"]
         }
+        # TODO: Minor: Return 201 on POST success.
         return json.dumps(ret_val)
 
     return app
@@ -172,6 +187,12 @@ def create_app(event_store: EventStore):
 
 
 def _has_excessive_withdrawal_amount(req: request) -> bool:
+    """Stateless check to validate if the withdrawal amount has been
+    exceeded.
+
+    :param request req: Flask `/event` request to inspect.
+    :returns bool. True if Withdrawal amount has been exceeded.
+    """
     if req["type"] != "withdrawal":
         return False
     # Validate excessive withdrawal amount:
