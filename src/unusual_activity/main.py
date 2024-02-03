@@ -25,6 +25,7 @@ from flask import (
 from pydantic import (
     BaseModel,
     model_validator,
+    NonNegativeInt,
     PositiveInt,
     ValidationError,
 )
@@ -40,7 +41,7 @@ class EventRequest(BaseModel):
     :raises: pydantic.ValidationError.
     """
     amount: str
-    t: PositiveInt
+    t: NonNegativeInt
     type: EVENT_TYPE_LITERAL
     user_id: PositiveInt
 
