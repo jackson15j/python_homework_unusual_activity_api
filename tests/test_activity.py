@@ -7,8 +7,8 @@ from src.unusual_activity.activity import (
     _convert_str_to_float,
     # Business Logic Validation:
     get_alert_state,
-    is_withdrawl_amount_excessive,
-    is_consecutive_withdrawls,
+    is_withdrawal_amount_excessive,
+    is_consecutive_withdrawals,
     is_consecutive_increasing_deposits,
     is_excessive_deposit_amount_in_period,
 )
@@ -38,10 +38,10 @@ class TestActivityBusinessLogic:
     def test_get_alert_state(self):
         pass
 
-    def test_is_withdrawl_amount_excessive(self):
+    def test_is_withdrawal_amount_excessive(self):
         pass
 
-    def test_is_consecutive_withdrawls(self):
+    def test_is_consecutive_withdrawals(self):
         pass
 
     def test_is_consecutive_increasing_deposits(self):

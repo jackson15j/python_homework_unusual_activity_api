@@ -7,7 +7,7 @@ authors = [
 ]
 description = "Simple to project to expose an endpoint to highlight unusual activity."
 requires-python = ">=3.12"
-keywords = ["account", "withdrawl", "deposit"]
+keywords = ["account", "withdrawal", "deposit"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
