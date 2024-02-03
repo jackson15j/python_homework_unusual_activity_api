@@ -1,16 +1,16 @@
 import json
 
 from src.unusual_activity.constants import (
-    CODE_EXCESSIVE_WITHDRAWAL_AMOUNT,
-    CODE_CONSECUTIVE_WITHDRAWALS,
     CODE_CONSECUTIVE_INCREASING_DEPOSITS,
+    CODE_CONSECUTIVE_WITHDRAWALS,
     CODE_EXCESSIVE_DEPOSIT_AMOUNT_IN_PERIOD,
-    EXCESSIVE_WITHDRAWAL_AMOUNT,
+    CODE_EXCESSIVE_WITHDRAWAL_AMOUNT,
     CONSECUTIVE_WITHDRAWALS,
     CONSECUTIVE_INCREASING_DEPOSITS,
+    EVENT_TYPE_LITERAL,
     EXCESSIVE_DEPOSIT_AMOUNT,
     EXCESSIVE_DEPOSIT_PERIOD_SECONDS,
-    EVENT_TYPE_LITERAL,
+    EXCESSIVE_WITHDRAWAL_AMOUNT,
 )
 
 from flask import (
@@ -23,7 +23,10 @@ from pydantic import (
     PositiveInt,
     ValidationError,
 )
-from werkzeug.exceptions import BadRequest, HTTPException
+from werkzeug.exceptions import (
+    BadRequest,
+    HTTPException,
+)
 
 
 class EventRequest(BaseModel):
@@ -95,7 +98,6 @@ class EventStore:
         # Filter out withdrawal's.
         deposit_recs = [x for x in user_recs if x["type"] == "deposit" and x["t"] >= first_t]
         total_deposit = sum(float(x["amount"]) for x in deposit_recs)
-        print(total_deposit)
         return bool(total_deposit > EXCESSIVE_DEPOSIT_AMOUNT)
 
 
