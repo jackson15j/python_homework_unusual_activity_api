@@ -31,9 +31,7 @@ class EventStore:
         user_recs = [x for x in self.db if x["user_id"] == user_id]
         withdrawal_recs = [x for x in user_recs if x["type"] == "withdrawal"]
         last_recs = withdrawal_recs[-CONSECUTIVE_WITHDRAWALS:]
-        if len(last_recs) < CONSECUTIVE_WITHDRAWALS:
-            return False
-        return True
+        return bool(len(last_recs) >= CONSECUTIVE_WITHDRAWALS)
 
     def has_consecutive_increasing_deposits(self, user_id: int) -> bool:
         # TODO: Refactor reduce the number of passes to get the list
