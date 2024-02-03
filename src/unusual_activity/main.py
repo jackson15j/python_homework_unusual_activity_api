@@ -9,11 +9,21 @@ DB = {}
 
 @app.post("/event")
 def event():
-    # Validate `t` is increasing between requests.
+    # Validate body. Return 400 on missing required key from body.
+    amount = request.form.get("amount")
+    if amount is None:
+        abort(400)
     t = request.form.get("t")
     if t is None:
-        # Missing required key in POST body!
         abort(400)
+    _type = request.form.get("type")
+    if _type is None:
+        abort(400)
+    user_id = request.form.get("user_id")
+    if user_id is None:
+        abort(400)
+
+    # Validate `t` is increasing between requests.
     _t = int(t)
     global LAST_T  # TODO: move away from `global` for global tracking!
     if _t <= LAST_T:
@@ -23,7 +33,6 @@ def event():
 
 
     # TODO: Parse JSON body.
-    # TODO: Validate body. Return 400 on invalid body.
     # TODO: Minor: Return 201 on POST success.
     # TODO: Business Logic validation.
     # TODO: Generate Response.
