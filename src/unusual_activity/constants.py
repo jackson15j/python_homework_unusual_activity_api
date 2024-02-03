@@ -1,10 +1,13 @@
-
 from enum import Enum
+from typing import Literal
 
 
 class ActivityType(Enum):
     DEPOSIT = "deposit"
     WITHDRAW = "withdraw"
+
+
+EVENT_TYPE_LITERAL = Literal["deposit", "withdrawal"]
 
 
 # Codes:

@@ -10,6 +10,7 @@ from src.unusual_activity.constants import (
     CONSECUTIVE_INCREASING_DEPOSITS,
     EXCESSIVE_DEPOSIT_AMOUNT,
     EXCESSIVE_DEPOSIT_PERIOD_SECONDS,
+    EVENT_TYPE_LITERAL,
 )
 
 from flask import (
@@ -18,6 +19,7 @@ from flask import (
 )
 from pydantic import (
     BaseModel,
+    model_validator,
     PositiveInt,
     ValidationError,
 )
@@ -31,8 +33,18 @@ class EventRequest(BaseModel):
     """
     amount: str
     t: PositiveInt
-    type: str
+    type: EVENT_TYPE_LITERAL
     user_id: PositiveInt
+
+    @model_validator(mode="after")
+    def check_positivefloat_in_str(self):
+        # Haven't found a clean way to do something like:
+        # `amount: str[PositiveFloat]` in above pydantic BaseModel
+        # validation.
+        a = self.amount
+        if float(a) < 0:
+            raise ValueError("amount needs to be a positive float in a str type!")
+        return self
 
 
 class EventStore:
@@ -97,7 +109,13 @@ def create_app(event_store: EventStore):
     def handle_validation_errors(e):
         if isinstance(e, HTTPException):
             return e
-        return e.errors(), BadRequest.code
+        errors = e.errors()
+        for error in errors:
+            if "ctx" in error:
+                # Pop non-json serialisable key/value pair.
+                # Message is duplicated in "msg" value.
+                error.pop("ctx")
+        return errors, BadRequest.code
 
     @app.post("/event")
     def event():
