@@ -1,10 +1,5 @@
 import json
 
-from flask import (
-    Flask,
-    request,
-)
-
 from src.unusual_activity.constants import (
     CODE_EXCESSIVE_WITHDRAWAL_AMOUNT,
     CODE_CONSECUTIVE_WITHDRAWALS,
@@ -16,6 +11,28 @@ from src.unusual_activity.constants import (
     EXCESSIVE_DEPOSIT_AMOUNT,
     EXCESSIVE_DEPOSIT_PERIOD_SECONDS,
 )
+
+from flask import (
+    Flask,
+    request,
+)
+from pydantic import (
+    BaseModel,
+    PositiveInt,
+    ValidationError,
+)
+from werkzeug.exceptions import BadRequest, HTTPException
+
+
+class EventRequest(BaseModel):
+    """Pydantic model used in `/event` request validation.
+
+    :raises: pydantic.ValidationError.
+    """
+    amount: str
+    t: PositiveInt
+    type: str
+    user_id: PositiveInt
 
 
 class EventStore:
@@ -76,10 +93,18 @@ def create_app(event_store: EventStore):
 
     LAST_T = 0
 
+    @app.errorhandler(ValidationError)
+    def handle_validation_errors(e):
+        if isinstance(e, HTTPException):
+            return e
+        return e.errors(), BadRequest.code
 
     @app.post("/event")
     def event():
         req = request.get_json()
+        # Validate request body.
+        EventRequest(**req)
+
         alert_codes = []
         event_store.add_event(req)
 

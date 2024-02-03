@@ -208,31 +208,31 @@ class TestMain:
         assert CODE_CONSECUTIVE_INCREASING_DEPOSITS in _alert_codes
         assert CODE_EXCESSIVE_DEPOSIT_AMOUNT_IN_PERIOD in _alert_codes
 
-    # @pytest.mark.parametrize(
-    #     "msg,data,exp_code", (
-    #         # 200
-    #         ("Good deposit", {"type": "deposit", "amount": "42.00", "user_id": 1, "t": 1} , 200),
-    #         ("Good withdrawal", {"type": "withdrawal", "amount": "40.00", "user_id": 1, "t": 2} , 200),
-    #         # 400 - Missing Required fields.
-    #         ("Empty Body", {} , 400),
-    #         ("Missing type", {"amount": "40.00", "user_id": 1, "t": 10} , 400),
-    #         ("Missing amount", {"type": "withdrawal", "user_id": 1, "t": 11} , 400),
-    #         ("Missing user_id", {"type": "withdrawal", "amount": "40.00", "t": 12} , 400),
-    #         ("Missing t", {"type": "withdrawal", "amount": "40.00", "user_id": 1,} , 400),
-    #         # 400 - Bad types.
-    #         ("Bad type type", {"type": None, "amount": "40.00", "user_id": 1, "t": 20} , 400),
-    #         ("Bad amount type", {"type": "withdrawal", "amount": None, "user_id": 1, "t": 21} , 400),
-    #         ("Bad user_id type", {"type": "withdrawal", "amount": "40.00", "user_id": None, "t": 22} , 400),
-    #         ("Bad t type", {"type": "withdrawal", "amount": "40.00", "user_id": 1, "t": None} , 400),
-    #         # 400 - Unexpected Values.
-    #         ("Unexpected type", {"type": "unknown", "amount": "40.00", "user_id": 1, "t": 30} , 400),
-    #         ("Unexpected amount deposit", {"type": "deposit", "amount": "-40.00", "user_id": 1, "t": 31} , 400),
-    #         ("Unexpected amount withdrawal", {"type": "withdrawal", "amount": "-40.00", "user_id": 1, "t": 32} , 400),
-    #         ("Unexpected user_id", {"type": "deposit", "amount": "40.00", "user_id": -1, "t": 33} , 400),
-    #         ("Unexpected t", {"type": "deposit", "amount": "40.00", "user_id": 1, "t": -34} , 400),
-    #     )
-    # )
-    # def test_invalid_event_post_body_returns_400(self, client, msg, data, exp_code):
-    #     response = client.post("/event", json=data)
-    #     print(msg)
-    #     assert response.status_code == exp_code
+    @pytest.mark.parametrize(
+        "msg,data,exp_code", (
+            # 200
+            ("Good deposit", {"type": "deposit", "amount": "42.00", "user_id": 1, "t": 1} , 200),
+            ("Good withdrawal", {"type": "withdrawal", "amount": "40.00", "user_id": 1, "t": 2} , 200),
+            # 400 - Missing Required fields.
+            ("Empty Body", {} , 400),
+            ("Missing type", {"amount": "40.00", "user_id": 1, "t": 10} , 400),
+            ("Missing amount", {"type": "withdrawal", "user_id": 1, "t": 11} , 400),
+            ("Missing user_id", {"type": "withdrawal", "amount": "40.00", "t": 12} , 400),
+            ("Missing t", {"type": "withdrawal", "amount": "40.00", "user_id": 1,} , 400),
+            # 400 - Bad types.
+            ("Bad type type", {"type": None, "amount": "40.00", "user_id": 1, "t": 20} , 400),
+            ("Bad amount type", {"type": "withdrawal", "amount": None, "user_id": 1, "t": 21} , 400),
+            ("Bad user_id type", {"type": "withdrawal", "amount": "40.00", "user_id": None, "t": 22} , 400),
+            ("Bad t type", {"type": "withdrawal", "amount": "40.00", "user_id": 1, "t": None} , 400),
+            # 400 - Unexpected Values.
+            ("Unexpected type", {"type": "unknown", "amount": "40.00", "user_id": 1, "t": 30} , 400),
+            ("Unexpected amount deposit", {"type": "deposit", "amount": "-40.00", "user_id": 1, "t": 31} , 400),
+            ("Unexpected amount withdrawal", {"type": "withdrawal", "amount": "-40.00", "user_id": 1, "t": 32} , 400),
+            ("Unexpected user_id", {"type": "deposit", "amount": "40.00", "user_id": -1, "t": 33} , 400),
+            ("Unexpected t", {"type": "deposit", "amount": "40.00", "user_id": 1, "t": -34} , 400),
+        )
+    )
+    def test_invalid_event_post_body_returns_400(self, client, msg, data, exp_code):
+        response = client.post("/event", json=data)
+        print(msg)
+        assert response.status_code == exp_code
