@@ -26,11 +26,14 @@ class EventStore:
         self.db.append(event)
 
     def has_consecutive_withdrawals(self, user_id: int) -> bool:
+        # TODO: Refactor reduce the number of passes to get the list
+        # of <CONSECUTIVE_WITHDRAWALS> to focus on!
         user_recs = [x for x in self.db if x["user_id"] == user_id]
-        last_recs = user_recs[-CONSECUTIVE_WITHDRAWALS:]
+        withdrawal_recs = [x for x in user_recs if x["type"] == "withdrawal"]
+        last_recs = withdrawal_recs[-CONSECUTIVE_WITHDRAWALS:]
         if len(last_recs) < CONSECUTIVE_WITHDRAWALS:
             return False
-        return bool([x for x in last_recs if x["type"] == "withdrawal"])
+        return True
 
     def has_consecutive_increasing_deposits(self, user_id: int) -> bool:
         # TODO: Refactor reduce the number of passes to get the list

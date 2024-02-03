@@ -109,40 +109,40 @@ class TestMain:
         assert response.status_code == 200
         assert json.loads(response.data) == exp_alert_dict
 
-    # def test_consecutive_increasing_deposits_ignoring_withdrawals_alert(self, client):
-    #     exp_dict = {"alert": False, "alert_codes": [], "user_id": 1}
-    #     exp_alert_dict = {
-    #         "alert": True,
-    #         "alert_codes": [
-    #             CODE_CONSECUTIVE_INCREASING_DEPOSITS,
-    #         ],
-    #         "user_id": 1
-    #     }
-    #     data = {"type": "deposit", "amount": "2.00", "user_id": 1, "t": 1}
-    #     response = client.post("/event", json=data)
-    #     assert response.status_code == 200
-    #     assert json.loads(response.data) == exp_dict
+    def test_consecutive_increasing_deposits_ignoring_withdrawals_alert(self, client):
+        exp_dict = {"alert": False, "alert_codes": [], "user_id": 1}
+        exp_alert_dict = {
+            "alert": True,
+            "alert_codes": [
+                CODE_CONSECUTIVE_INCREASING_DEPOSITS,
+            ],
+            "user_id": 1
+        }
+        data = {"type": "deposit", "amount": "2.00", "user_id": 1, "t": 1}
+        response = client.post("/event", json=data)
+        assert response.status_code == 200
+        assert json.loads(response.data) == exp_dict
 
-    #     data["t"] = 2
-    #     data["amount"] = "4.00"
-    #     response = client.post("/event", json=data)
-    #     assert response.status_code == 200
-    #     assert json.loads(response.data) == exp_dict
+        data["t"] = 2
+        data["amount"] = "4.00"
+        response = client.post("/event", json=data)
+        assert response.status_code == 200
+        assert json.loads(response.data) == exp_dict
 
-    #     print(
-    #         "Withdrawal's MUST be ignored as part of the: 3 consecutive_"
-    #         "increasing deposits, alert!"
-    #     )
-    #     withdrawal_data = {"type": "withdrawal", "amount": "1.00", "user_id": 1, "t": 3}
-    #     response = client.post("/event", json=withdrawal_data)
-    #     assert response.status_code == 200
-    #     assert json.loads(response.data) == exp_dict
+        print(
+            "Withdrawal's MUST be ignored as part of the: 3 consecutive_"
+            "increasing deposits, alert!"
+        )
+        withdrawal_data = {"type": "withdrawal", "amount": "1.00", "user_id": 1, "t": 3}
+        response = client.post("/event", json=withdrawal_data)
+        assert response.status_code == 200
+        assert json.loads(response.data) == exp_dict
 
-    #     data["t"] = 4
-    #     data["amount"] = "6.00"
-    #     response = client.post("/event", json=data)
-    #     assert response.status_code == 200
-    #     assert json.loads(response.data) == exp_alert_dict
+        data["t"] = 4
+        data["amount"] = "6.00"
+        response = client.post("/event", json=data)
+        assert response.status_code == 200
+        assert json.loads(response.data) == exp_alert_dict
 
     # def test_excessive_deposit_amount_in_period_alert(self, client):
     #     exp_dict = {"alert": False, "alert_codes": [], "user_id": 1}
