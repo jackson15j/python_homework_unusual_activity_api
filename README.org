@@ -1,7 +1,7 @@
 #+PROPERTY: header-args:mermaid :prologue "exec 2>&1" :epilogue ":" :pupeteer-config-file ~/.puppeteerrc
 #+PROPERTY: header-args:shell :prologue "exec 2>&1" :epilogue ":" :results code :async
 * Unusual Activity API:
-Simple to project to expose an endpoint to highlight unusual activity.
+Simple project to expose an endpoint to highlight unusual activity.
 
 ** Problem:
 

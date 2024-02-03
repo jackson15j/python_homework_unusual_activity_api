@@ -5,7 +5,7 @@ license = {file = "LICENSE"}
 authors = [
   { name="Craig Astill", email="craigastill@gmail.com" },
 ]
-description = "Simple to project to expose an endpoint to highlight unusual activity."
+description = "Simple project to expose an endpoint to highlight unusual activity."
 requires-python = ">=3.12"
 keywords = ["account", "withdrawal", "deposit"]
 classifiers = [
