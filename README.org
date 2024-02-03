@@ -439,4 +439,45 @@ Plus separate global ~last_t = <int>~ in Request Handler.
 
 ** Retrospective:
 
-*** 
+Parking the exercise in a functional state and doing a quick retro.
+
+*** Good:
+
+- Working code.
+- Literate doc example /(emacs org-babel executable code blocks)/.
+- Flask/Pydantic refresher.
+- Red/Green/Refactor TDD helped focus the problem into bite-size
+  chunks (See: *Ugly*. This is what pulled me out of the rat-hole),
+
+*** Bad:
+
+- Spent too long over thinking data structures.
+- Added too much unnecessary structure/thought upfront, instead of
+  just getting something dirty working and then iterating.
+- In-memory lists are fine, but:
+  - Validation functions are both memory & cpu wasteful from doing
+    multiple passes to filter down the selection.
+  - Suitably indexed SQL DB table would be more efficient for
+    querying.
+- Should split out functionality into appropriate files/modules -
+  API endpoints / EventStore.
+- Semantic Release tagging isn't happy with multiple commits pushed
+  directly to the trunk branch (Typically would pull work in via
+  branches/pr, but was just in sole-contributor mode).
+
+*** Ugly:
+
+- Life problems destroyed all ability to focus on coding piece.
+- Greenfield coding is not my mindset (too many years of having to
+  think wide & deep on problems meant I went deep down the rat-hole
+  and painted myself into a trap of my own making for a while).
+
+*** Changes:
+
+- PoC/Greenfields work is about running with the iterative mindset. I
+  need to work on my mental discipline in this area, to avoid losing
+  focus.
+- I left quite a few refactor TODO's in place. If I had gotten working
+  code sooner, I would have cleaned them up. Despite it not being a
+  functional change, the /"maintainability"/ side of me wants to clean
+  the code up.
