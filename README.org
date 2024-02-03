@@ -278,58 +278,65 @@ Expected Codes:
 
 ** Pre-Thoughts:
 
-- Business logic separated from endpoint framework:
-  - Unittest business logic.
-  - Validate each requirement in isolation.
-  - Maintain state (DB (/potentially/ sqlite for ease).
-- Code Flow:
-  - Parse Request.
-  - /Potentially:/ early validation. eg. unique =t= values.
-  - Store request history by =user_id=.
-  - Get all data by =user_id=.
-  - Run each check.
-  - Collate =alert_codes=, if any.
-  - Generate Response.
-- Contract Boundary testing of the endpoint:
-  - Pro's:
-    - Real World: Contract's enforce hard-boundaries, upfront
-      design/collaboration, parallelisation of implementation,
-      code/test generation, VCS-based tooling.
-    - Test Generation by: [[https://specmatic.in/documentation.html][Specmatic]], [[https://dredd.org/en/latest/index.html][Dredd]] is a time-saver vs bespoke
-      integration test writing.
-      - Personally like Specmatic for it's test generation that can be
-        supplemented with OpenAPI spec =examples= and/or [[https://cucumber.io/docs/gherkin/][Gherkin]]
-        tests.
-      - [[https://docs.pact.io/consumer][PACT]] consumer-driven testing would require writing bespoke
-        tests + a broker. Overkill for this single Server exercise,
-        but a fine test if you had bespoke API endpoint tests and
-        wanted to pull in the PACT library as a trial of the PACT
-        Broker.
-  - Con's:
-    - Test Generation is a greater productivity boost when you use
-      code generation of Server/Client endpoints + Models.
-      - Sadly, python code generation is still poor, where the output
-        requires heavy templating and post-generation cleanup to allow
-        seamless regeneration (Compare: Golang's [[https://github.com/deepmap/oapi-codegen/][Github:
-        deepmap/oapi-codegen/]] vs Golang/Python/etc's [[https://github.com/swagger-api/swagger-codegen][Github:
-        swagger-api/swagger-codegen]] output).
-        - Easy to fall into the trap of:
-          - Generate once, move spec to be generated from Producer's
-            code/docstrings, Producer implementation is now a gate for
-            Consumers/tooling/generative-testing to start.
-          - Duplication from Code and Spec being kept in sync.
-      - Spec writing + docker/CI setup for Specmatic is non-trivial
-        and probably too much work for a quick homework project.
-  - Not a fan of mocking API routing to avoid running up the Server
-    for testing. Seen (and had to educate) too many Teams that have
-    over-mocked the routing (ie. Self-contained tests that validate
-    the mock state and not Production code).
-- Release:
-  - *MVP:* Steps to run `python <server.py>`.
-  - *Next:* Python package to be installed into a venv, and then run.
-  - *Ideal:* Docker container with running app as entrypoint.
-  - *Ideal:* Github CI actions (lint, build, test, etc).
-
+*** Assumptions:
+- =t= is a substitute for =<datetime>=, so I'm explicitly not
+  treating =t= values unique between different =user_id='s!
+- There are no requirement's for tracking of the current User total
+  amount (even thought I do mention it in: [[*Proposed Data Structures:][Proposed Data Structures]]
+  section, I am explicitly not adding an logic to total
+  deposit/withdrawal amounts + /potentially/ prevent negative
+  totals).
+*** Business logic separated from endpoint framework:
+- Unittest business logic.
+- Validate each requirement in isolation.
+- Maintain state (DB (/potentially/ sqlite for ease).
+*** Code Flow:
+- Parse Request.
+- /Potentially:/ early validation. eg. unique =t= values.
+- Store request history by =user_id=.
+- Get all data by =user_id=.
+- Run each check.
+- Collate =alert_codes=, if any.
+- Generate Response.
+*** Contract Boundary testing of the endpoint:
+- *Pro's:*
+  - Real World: Contract's enforce hard-boundaries, upfront
+    design/collaboration, parallelisation of implementation,
+    code/test generation, VCS-based tooling.
+  - Test Generation by: [[https://specmatic.in/documentation.html][Specmatic]], [[https://dredd.org/en/latest/index.html][Dredd]] is a time-saver vs bespoke
+    integration test writing.
+    - Personally like Specmatic for it's test generation that can be
+      supplemented with OpenAPI spec =examples= and/or [[https://cucumber.io/docs/gherkin/][Gherkin]]
+      tests.
+    - [[https://docs.pact.io/consumer][PACT]] consumer-driven testing would require writing bespoke
+      tests + a broker. Overkill for this single Server exercise,
+      but a fine test if you had bespoke API endpoint tests and
+      wanted to pull in the PACT library as a trial of the PACT
+      Broker.
+- *Con's:*
+  - Test Generation is a greater productivity boost when you use
+    code generation of Server/Client endpoints + Models.
+    - Sadly, python code generation is still poor, where the output
+      requires heavy templating and post-generation cleanup to allow
+      seamless regeneration (Compare: Golang's [[https://github.com/deepmap/oapi-codegen/][Github:
+      deepmap/oapi-codegen/]] vs Golang/Python/etc's [[https://github.com/swagger-api/swagger-codegen][Github:
+      swagger-api/swagger-codegen]] output).
+      - Easy to fall into the trap of:
+        - Generate once, move spec to be generated from Producer's
+          code/docstrings, Producer implementation is now a gate for
+          Consumers/tooling/generative-testing to start.
+        - Duplication from Code and Spec being kept in sync.
+    - Spec writing + docker/CI setup for Specmatic is non-trivial
+      and probably too much work for a quick homework project.
+- Not a fan of mocking API routing to avoid running up the Server
+  for testing. Seen (and had to educate) too many Teams that have
+  over-mocked the routing (ie. Self-contained tests that validate
+  the mock state and not Production code).
+*** Release:
+- *MVP:* Steps to run `python <server.py>`.
+- *Next:* Python package to be installed into a venv, and then run.
+- *Ideal:* Docker container with running app as entrypoint.
+- *Ideal:* Github CI actions (lint, build, test, etc).
 
 ** Proposed Data Structures:
 
@@ -420,14 +427,14 @@ Plus separate global ~last_t = <int>~ in Request Handler.
     - Validation maintained when transitioning Application language.
     - Centralised logic is ideal for shared DB's.
     - Validation is still in place for any direct DB modifications.
-  - =SELECT T FROM AuditHistory WHERE T < :t ORDER BY
-    insertion_timestamp DESC LIMIT 1;= for increasing check.
+  - =SELECT T FROM AuditHistory WHERE T < :t ORDER BY insertion_timestamp DESC LIMIT 1;=
+    for increasing check.
     - Can use the SQL engines get last row equivalent, as an optimisation.
     - With a bit more thinking this could be an SQL constraint that
       checks the last value.
-      - Did a little digging and this can be done with a =BEFORE
-        INSERT= Trigger, to create a custom constraint.
-  - =SELECT * FROM AuditHistory WHERE UserId == :user_id ORDER BY T=
+      - Did a little digging and this can be done with a =BEFORE INSERT=
+        Trigger, to create a custom constraint.
+  - ~SELECT * FROM AuditHistory WHERE UserId == :user_id ORDER BY T~
     to get data for uniqueness checks.
 - Con's:
   - Need to Duplicate validation up the stack if you want to reduce
