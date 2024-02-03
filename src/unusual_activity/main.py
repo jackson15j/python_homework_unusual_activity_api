@@ -28,7 +28,7 @@ class EventStore:
         last_recs = user_recs[-CONSECUTIVE_WITHDRAWALS:]
         if len(last_recs) < CONSECUTIVE_WITHDRAWALS:
             return False
-        return all(x for x in last_recs if x["type"] == "withdrawal")
+        return bool([x for x in last_recs if x["type"] == "withdrawal"])
 
 
 def create_app(event_store: EventStore):
