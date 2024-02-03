@@ -26,17 +26,6 @@ from src.unusual_activity.constants import (
 
 
 class TestMain:
-    def test_hardcoded_event(self, client):
-        """Testing of the initial stub.
-        TODO: This will be deleted once the business logic has been
-        implemented.
-        """
-        exp = (b'{"alert": true, "alert_codes": [30, 123], "user_id": 1}')
-        exp_dict = {"alert": True, "alert_codes": [30, 123], "user_id": 1}
-        response = client.post("/event")
-        assert response.data == exp
-        assert json.loads(response.data) == exp_dict
-
     def test_initial_event_no_alert(self, client):
         """Smoke check that no alerts are raised when there are no
         bad events to trigger an alert.
