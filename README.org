@@ -1,3 +1,5 @@
+#+PROPERTY: header-args:mermaid :prologue "exec 2>&1" :epilogue ":" :pupeteer-config-file ~/.puppeteerrc
+#+PROPERTY: header-args:shell :prologue "exec 2>&1" :epilogue ":" :results code :async
 * Unusual Activity API:
 Simple to project to expose an endpoint to highlight unusual activity.
 
@@ -52,12 +54,227 @@ Expected Codes:
 
 ** Usage:
 
-- Curl Example:
+- Run up the server:
+  #+NAME: server_setup
+  #+BEGIN_SRC shell
+    make dev-setup
+    make run-dev
+  #+END_SRC
 
-  #+BEGIN_EXAMPLE shell
+  #+BEGIN_SRC shell
+  rm -rf .venv-dev || true
+  python -m venv .venv-dev
+  Processing /Users/craig/github_repos/python_homework_unusual_activity_api
+    Installing build dependencies: started
+    Installing build dependencies: finished with status 'done'
+    Getting requirements to build wheel: started
+    Getting requirements to build wheel: finished with status 'done'
+    Installing backend dependencies: started
+    Installing backend dependencies: finished with status 'done'
+    Preparing metadata (pyproject.toml): started
+    Preparing metadata (pyproject.toml): finished with status 'done'
+  Collecting flask>=3.0.1
+    Using cached flask-3.0.2-py3-none-any.whl.metadata (3.6 kB)
+  Collecting pydantic>=2.6.0
+    Using cached pydantic-2.6.0-py3-none-any.whl.metadata (81 kB)
+  Collecting werkzeug>=3.0.1
+    Using cached werkzeug-3.0.1-py3-none-any.whl.metadata (4.1 kB)
+  Collecting build>=1.0.3
+    Using cached build-1.0.3-py3-none-any.whl.metadata (4.2 kB)
+  Collecting packaging>=19.0 (from build>=1.0.3)
+    Using cached packaging-23.2-py3-none-any.whl.metadata (3.2 kB)
+  Collecting pyproject_hooks (from build>=1.0.3)
+    Using cached pyproject_hooks-1.0.0-py3-none-any.whl (9.3 kB)
+  Collecting Jinja2>=3.1.2 (from flask>=3.0.1)
+    Using cached Jinja2-3.1.3-py3-none-any.whl.metadata (3.3 kB)
+  Collecting itsdangerous>=2.1.2 (from flask>=3.0.1)
+    Using cached itsdangerous-2.1.2-py3-none-any.whl (15 kB)
+  Collecting click>=8.1.3 (from flask>=3.0.1)
+    Using cached click-8.1.7-py3-none-any.whl.metadata (3.0 kB)
+  Collecting blinker>=1.6.2 (from flask>=3.0.1)
+    Using cached blinker-1.7.0-py3-none-any.whl.metadata (1.9 kB)
+  Collecting annotated-types>=0.4.0 (from pydantic>=2.6.0)
+    Using cached annotated_types-0.6.0-py3-none-any.whl.metadata (12 kB)
+  Collecting pydantic-core==2.16.1 (from pydantic>=2.6.0)
+    Using cached pydantic_core-2.16.1-cp312-cp312-macosx_11_0_arm64.whl.metadata (6.5 kB)
+  Collecting typing-extensions>=4.6.1 (from pydantic>=2.6.0)
+    Using cached typing_extensions-4.9.0-py3-none-any.whl.metadata (3.0 kB)
+  Collecting MarkupSafe>=2.1.1 (from werkzeug>=3.0.1)
+    Using cached MarkupSafe-2.1.5-cp312-cp312-macosx_10_9_universal2.whl.metadata (3.0 kB)
+  Using cached build-1.0.3-py3-none-any.whl (18 kB)
+  Using cached flask-3.0.2-py3-none-any.whl (101 kB)
+  Using cached pydantic-2.6.0-py3-none-any.whl (394 kB)
+  Using cached pydantic_core-2.16.1-cp312-cp312-macosx_11_0_arm64.whl (1.7 MB)
+  Using cached werkzeug-3.0.1-py3-none-any.whl (226 kB)
+  Using cached annotated_types-0.6.0-py3-none-any.whl (12 kB)
+  Using cached blinker-1.7.0-py3-none-any.whl (13 kB)
+  Using cached click-8.1.7-py3-none-any.whl (97 kB)
+  Using cached Jinja2-3.1.3-py3-none-any.whl (133 kB)
+  Using cached MarkupSafe-2.1.5-cp312-cp312-macosx_10_9_universal2.whl (18 kB)
+  Using cached packaging-23.2-py3-none-any.whl (53 kB)
+  Using cached typing_extensions-4.9.0-py3-none-any.whl (32 kB)
+  Building wheels for collected packages: unusual_activity
+    Building wheel for unusual_activity (pyproject.toml): started
+    Building wheel for unusual_activity (pyproject.toml): finished with status 'done'
+    Created wheel for unusual_activity: filename=unusual_activity-1.0.1.dev18+gc106ab5.d20240203-py3-none-any.whl size=30238 sha256=7eaacbd84eb41f748440acd86d288dbde2f10a9bd5116f04177e83c33ce3b208
+    Stored in directory: /private/var/folders/tl/tpmbfj7n33x27vbhqn_70y1r0000gn/T/pip-ephem-wheel-cache-1onnhb2s/wheels/14/89/5d/bdf8e99bee819ea851c03dc501ab129cadd4e2e89fb22a8349
+  Successfully built unusual_activity
+  Installing collected packages: typing-extensions, pyproject_hooks, packaging, MarkupSafe, itsdangerous, click, blinker, annotated-types, werkzeug, pydantic-core, Jinja2, build, pydantic, flask, unusual_activity
+  Successfully installed Jinja2-3.1.3 MarkupSafe-2.1.5 annotated-types-0.6.0 blinker-1.7.0 build-1.0.3 click-8.1.7 flask-3.0.2 itsdangerous-2.1.2 packaging-23.2 pydantic-2.6.0 pydantic-core-2.16.1 pyproject_hooks-1.0.0 typing-extensions-4.9.0 unusual_activity-1.0.1.dev18+gc106ab5.d20240203 werkzeug-3.0.1
+
+  [notice] A new release of pip is available: 23.3.1 -> 23.3.2
+  [notice] To update, run: pip install --upgrade pip
+  Processing /Users/craig/github_repos/python_homework_unusual_activity_api
+    Installing build dependencies: started
+    Installing build dependencies: finished with status 'done'
+    Getting requirements to build wheel: started
+    Getting requirements to build wheel: finished with status 'done'
+    Installing backend dependencies: started
+    Installing backend dependencies: finished with status 'done'
+    Preparing metadata (pyproject.toml): started
+    Preparing metadata (pyproject.toml): finished with status 'done'
+  Requirement already satisfied: flask>=3.0.1 in ./.venv-dev/lib/python3.12/site-packages (3.0.2)
+  Requirement already satisfied: pydantic>=2.6.0 in ./.venv-dev/lib/python3.12/site-packages (2.6.0)
+  Requirement already satisfied: werkzeug>=3.0.1 in ./.venv-dev/lib/python3.12/site-packages (3.0.1)
+  Collecting ruff>=v0.1.11
+    Using cached ruff-0.2.0-py3-none-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl.metadata (23 kB)
+  Requirement already satisfied: Jinja2>=3.1.2 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1) (3.1.3)
+  Requirement already satisfied: itsdangerous>=2.1.2 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1) (2.1.2)
+  Requirement already satisfied: click>=8.1.3 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1) (8.1.7)
+  Requirement already satisfied: blinker>=1.6.2 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1) (1.7.0)
+  Requirement already satisfied: annotated-types>=0.4.0 in ./.venv-dev/lib/python3.12/site-packages (from pydantic>=2.6.0) (0.6.0)
+  Requirement already satisfied: pydantic-core==2.16.1 in ./.venv-dev/lib/python3.12/site-packages (from pydantic>=2.6.0) (2.16.1)
+  Requirement already satisfied: typing-extensions>=4.6.1 in ./.venv-dev/lib/python3.12/site-packages (from pydantic>=2.6.0) (4.9.0)
+  Requirement already satisfied: MarkupSafe>=2.1.1 in ./.venv-dev/lib/python3.12/site-packages (from werkzeug>=3.0.1) (2.1.5)
+  Using cached ruff-0.2.0-py3-none-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl (14.4 MB)
+  Building wheels for collected packages: unusual_activity
+    Building wheel for unusual_activity (pyproject.toml): started
+    Building wheel for unusual_activity (pyproject.toml): finished with status 'done'
+    Created wheel for unusual_activity: filename=unusual_activity-1.0.1.dev18+gc106ab5.d20240203-py3-none-any.whl size=30238 sha256=926cdfff25cf72b871642ea6df7eeb20d1a0ee5de8d17984564149367a8e5a32
+    Stored in directory: /private/var/folders/tl/tpmbfj7n33x27vbhqn_70y1r0000gn/T/pip-ephem-wheel-cache-n5d9qp4e/wheels/14/89/5d/bdf8e99bee819ea851c03dc501ab129cadd4e2e89fb22a8349
+  Successfully built unusual_activity
+  Installing collected packages: ruff, unusual_activity
+    Attempting uninstall: unusual_activity
+      Found existing installation: unusual_activity 1.0.1.dev18+gc106ab5.d20240203
+      Uninstalling unusual_activity-1.0.1.dev18+gc106ab5.d20240203:
+        Successfully uninstalled unusual_activity-1.0.1.dev18+gc106ab5.d20240203
+  Successfully installed ruff-0.2.0 unusual_activity-1.0.1.dev18+gc106ab5.d20240203
+
+  [notice] A new release of pip is available: 23.3.1 -> 23.3.2
+  [notice] To update, run: pip install --upgrade pip
+  Processing /Users/craig/github_repos/python_homework_unusual_activity_api
+    Installing build dependencies: started
+    Installing build dependencies: finished with status 'done'
+    Getting requirements to build wheel: started
+    Getting requirements to build wheel: finished with status 'done'
+    Installing backend dependencies: started
+    Installing backend dependencies: finished with status 'done'
+    Preparing metadata (pyproject.toml): started
+    Preparing metadata (pyproject.toml): finished with status 'done'
+  Requirement already satisfied: flask>=3.0.1 in ./.venv-dev/lib/python3.12/site-packages (3.0.2)
+  Requirement already satisfied: pydantic>=2.6.0 in ./.venv-dev/lib/python3.12/site-packages (2.6.0)
+  Requirement already satisfied: werkzeug>=3.0.1 in ./.venv-dev/lib/python3.12/site-packages (3.0.1)
+  Collecting pytest>=7.4.4
+    Using cached pytest-8.0.0-py3-none-any.whl.metadata (7.8 kB)
+  Collecting pytest-cov>=4.1.0
+    Using cached pytest_cov-4.1.0-py3-none-any.whl.metadata (26 kB)
+  Collecting pytest-html>=4.1.1
+    Using cached pytest_html-4.1.1-py3-none-any.whl.metadata (3.9 kB)
+  Requirement already satisfied: Jinja2>=3.1.2 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1) (3.1.3)
+  Requirement already satisfied: itsdangerous>=2.1.2 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1) (2.1.2)
+  Requirement already satisfied: click>=8.1.3 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1) (8.1.7)
+  Requirement already satisfied: blinker>=1.6.2 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1) (1.7.0)
+  Requirement already satisfied: annotated-types>=0.4.0 in ./.venv-dev/lib/python3.12/site-packages (from pydantic>=2.6.0) (0.6.0)
+  Requirement already satisfied: pydantic-core==2.16.1 in ./.venv-dev/lib/python3.12/site-packages (from pydantic>=2.6.0) (2.16.1)
+  Requirement already satisfied: typing-extensions>=4.6.1 in ./.venv-dev/lib/python3.12/site-packages (from pydantic>=2.6.0) (4.9.0)
+  Collecting iniconfig (from pytest>=7.4.4)
+    Using cached iniconfig-2.0.0-py3-none-any.whl (5.9 kB)
+  Requirement already satisfied: packaging in ./.venv-dev/lib/python3.12/site-packages (from pytest>=7.4.4) (23.2)
+  Collecting pluggy<2.0,>=1.3.0 (from pytest>=7.4.4)
+    Using cached pluggy-1.4.0-py3-none-any.whl.metadata (4.3 kB)
+  Collecting coverage>=5.2.1 (from coverage[toml]>=5.2.1->pytest-cov>=4.1.0)
+    Using cached coverage-7.4.1-cp312-cp312-macosx_11_0_arm64.whl.metadata (8.2 kB)
+  Collecting pytest-metadata>=2.0.0 (from pytest-html>=4.1.1)
+    Using cached pytest_metadata-3.1.0-py3-none-any.whl.metadata (8.6 kB)
+  Requirement already satisfied: MarkupSafe>=2.1.1 in ./.venv-dev/lib/python3.12/site-packages (from werkzeug>=3.0.1) (2.1.5)
+  Using cached pytest-8.0.0-py3-none-any.whl (334 kB)
+  Using cached pytest_cov-4.1.0-py3-none-any.whl (21 kB)
+  Using cached pytest_html-4.1.1-py3-none-any.whl (23 kB)
+  Using cached coverage-7.4.1-cp312-cp312-macosx_11_0_arm64.whl (206 kB)
+  Using cached pluggy-1.4.0-py3-none-any.whl (20 kB)
+  Using cached pytest_metadata-3.1.0-py3-none-any.whl (10 kB)
+  Building wheels for collected packages: unusual_activity
+    Building wheel for unusual_activity (pyproject.toml): started
+    Building wheel for unusual_activity (pyproject.toml): finished with status 'done'
+    Created wheel for unusual_activity: filename=unusual_activity-1.0.1.dev18+gc106ab5.d20240203-py3-none-any.whl size=30238 sha256=5ce06d3304bb889fbb3578b21c7310b713c8a9a4bf7a983139a2f8803774e6d6
+    Stored in directory: /private/var/folders/tl/tpmbfj7n33x27vbhqn_70y1r0000gn/T/pip-ephem-wheel-cache-6awg86sr/wheels/14/89/5d/bdf8e99bee819ea851c03dc501ab129cadd4e2e89fb22a8349
+  Successfully built unusual_activity
+  Installing collected packages: pluggy, iniconfig, coverage, pytest, unusual_activity, pytest-metadata, pytest-cov, pytest-html
+    Attempting uninstall: unusual_activity
+      Found existing installation: unusual_activity 1.0.1.dev18+gc106ab5.d20240203
+      Uninstalling unusual_activity-1.0.1.dev18+gc106ab5.d20240203:
+        Successfully uninstalled unusual_activity-1.0.1.dev18+gc106ab5.d20240203
+  Successfully installed coverage-7.4.1 iniconfig-2.0.0 pluggy-1.4.0 pytest-8.0.0 pytest-cov-4.1.0 pytest-html-4.1.1 pytest-metadata-3.1.0 unusual_activity-1.0.1.dev18+gc106ab5.d20240203
+
+  [notice] A new release of pip is available: 23.3.1 -> 23.3.2
+  [notice] To update, run: pip install --upgrade pip
+  Processing /Users/craig/github_repos/python_homework_unusual_activity_api
+    Installing build dependencies: started
+    Installing build dependencies: finished with status 'done'
+    Getting requirements to build wheel: started
+    Getting requirements to build wheel: finished with status 'done'
+    Installing backend dependencies: started
+    Installing backend dependencies: finished with status 'done'
+    Preparing metadata (pyproject.toml): started
+    Preparing metadata (pyproject.toml): finished with status 'done'
+  Requirement already satisfied: flask>=3.0.1 in ./.venv-dev/lib/python3.12/site-packages (from unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (3.0.2)
+  Requirement already satisfied: pydantic>=2.6.0 in ./.venv-dev/lib/python3.12/site-packages (from unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (2.6.0)
+  Requirement already satisfied: werkzeug>=3.0.1 in ./.venv-dev/lib/python3.12/site-packages (from unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (3.0.1)
+  Requirement already satisfied: Jinja2>=3.1.2 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1->unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (3.1.3)
+  Requirement already satisfied: itsdangerous>=2.1.2 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1->unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (2.1.2)
+  Requirement already satisfied: click>=8.1.3 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1->unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (8.1.7)
+  Requirement already satisfied: blinker>=1.6.2 in ./.venv-dev/lib/python3.12/site-packages (from flask>=3.0.1->unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (1.7.0)
+  Requirement already satisfied: annotated-types>=0.4.0 in ./.venv-dev/lib/python3.12/site-packages (from pydantic>=2.6.0->unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (0.6.0)
+  Requirement already satisfied: pydantic-core==2.16.1 in ./.venv-dev/lib/python3.12/site-packages (from pydantic>=2.6.0->unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (2.16.1)
+  Requirement already satisfied: typing-extensions>=4.6.1 in ./.venv-dev/lib/python3.12/site-packages (from pydantic>=2.6.0->unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (4.9.0)
+  Requirement already satisfied: MarkupSafe>=2.1.1 in ./.venv-dev/lib/python3.12/site-packages (from werkzeug>=3.0.1->unusual_activity==1.0.1.dev18+gc106ab5.d20240203) (2.1.5)
+  Building wheels for collected packages: unusual_activity
+    Building wheel for unusual_activity (pyproject.toml): started
+    Building wheel for unusual_activity (pyproject.toml): finished with status 'done'
+    Created wheel for unusual_activity: filename=unusual_activity-1.0.1.dev18+gc106ab5.d20240203-py3-none-any.whl size=30238 sha256=e00c84b59ffe95c643ba5e6f3b711e9f321cb325de002922fba3f4a30c318ebd
+    Stored in directory: /private/var/folders/tl/tpmbfj7n33x27vbhqn_70y1r0000gn/T/pip-ephem-wheel-cache-vou951h1/wheels/14/89/5d/bdf8e99bee819ea851c03dc501ab129cadd4e2e89fb22a8349
+  Successfully built unusual_activity
+  Installing collected packages: unusual_activity
+    Attempting uninstall: unusual_activity
+      Found existing installation: unusual_activity 1.0.1.dev18+gc106ab5.d20240203
+      Uninstalling unusual_activity-1.0.1.dev18+gc106ab5.d20240203:
+        Successfully uninstalled unusual_activity-1.0.1.dev18+gc106ab5.d20240203
+  Successfully installed unusual_activity-1.0.1.dev18+gc106ab5.d20240203
+
+  [notice] A new release of pip is available: 23.3.1 -> 23.3.2
+  [notice] To update, run: pip install --upgrade pip
+
+  make run-dev
+   * Serving Flask app 'src/unusual_activity/app.py'
+   * Debug mode: off
+  WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+   * Running on http://127.0.0.1:5000
+  Press CTRL+C to quit
+  #+end_src
+
+- Curl Example:
+  #+NAME: curl_example
+  #+BEGIN_SRC shell
     curl -XPOST http://127.0.0.1:5000/event -H 'Content-Type: application/json' \
          -d '{"type": "deposit", "amount": "42.00", "user_id": 1, "t": 0}'
-  #+END_EXAMPLE
+  #+END_SRC
+
+  #+begin_src shell
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                   Dload  Upload   Total   Spent    Left  Speed
+    0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   109  100    49  100    60   9035  11063 --:--:-- --:--:-- --:--:-- 21800
+  {"alert": false, "alert_codes": [], "user_id": 1}
+  #+end_src
 
 ** Pre-Thoughts:
 
@@ -219,3 +436,7 @@ Plus separate global ~last_t = <int>~ in Request Handler.
       Validation.
   - Opaque behaviour from Application code point of view - requires
     good documentation and/or SQL literacy.
+
+** Retrospective:
+
+*** 
