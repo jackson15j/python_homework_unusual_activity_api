@@ -8,8 +8,10 @@ from flask import (
 from src.unusual_activity.constants import (
     CODE_EXCESSIVE_WITHDRAWAL_AMOUNT,
     CODE_CONSECUTIVE_WITHDRAWALS,
+    CODE_CONSECUTIVE_INCREASING_DEPOSITS,
     EXCESSIVE_WITHDRAWAL_AMOUNT,
     CONSECUTIVE_WITHDRAWALS,
+    CONSECUTIVE_INCREASING_DEPOSITS,
 )
 
 
@@ -29,6 +31,25 @@ class EventStore:
         if len(last_recs) < CONSECUTIVE_WITHDRAWALS:
             return False
         return bool([x for x in last_recs if x["type"] == "withdrawal"])
+
+    def has_consecutive_increasing_deposits(self, user_id: int) -> bool:
+        # TODO: Refactor reduce the number of passes to get the list
+        # of <CONSECUTIVE_INCREASING_DEPOSITS> to focus on!
+        user_recs = [x for x in self.db if x["user_id"] == user_id]
+        # Filter out withdrawal's.
+        deposit_recs = [x for x in user_recs if x["type"] == "deposit"]
+        last_recs = deposit_recs[-CONSECUTIVE_INCREASING_DEPOSITS:]
+        if len(last_recs) < CONSECUTIVE_INCREASING_DEPOSITS:
+            return False
+
+        # Check consecutive deposits are increasing.
+        amount = 0.0
+        for rec in last_recs:
+            current_amount = float(rec["amount"])
+            if current_amount <= amount:
+                return False
+            amount = current_amount
+        return True
 
 
 def create_app(event_store: EventStore):
@@ -56,13 +77,15 @@ def create_app(event_store: EventStore):
         # LAST_T = _t
 
         ## Stateless validation checks:
-
         if _has_excessive_withdrawal_amount(amount):
             alert_codes.append(CODE_EXCESSIVE_WITHDRAWAL_AMOUNT)
 
+        ## Stateful validation checks:
         if event_store.has_consecutive_withdrawals(req["user_id"]):
             alert_codes.append(CODE_CONSECUTIVE_WITHDRAWALS)
 
+        if event_store.has_consecutive_increasing_deposits(req["user_id"]):
+            alert_codes.append(CODE_CONSECUTIVE_INCREASING_DEPOSITS)
 
         # TODO: Parse JSON body.
         # TODO: Minor: Return 201 on POST success.
