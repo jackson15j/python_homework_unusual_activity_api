@@ -26,6 +26,15 @@ from src.unusual_activity.constants import (
 
 
 class TestMain:
+    def test_curl_example(self, client):
+        """Forgot to add a test for the example, which highlighted that
+        pydantic's `PositiveInt` doesn't count `0` as positive!
+        """
+        exp_dict = {"alert": False, "alert_codes": [], "user_id": 1}
+        data = {"type": "deposit", "amount": "42.00", "user_id": 1, "t": 0}
+        response = client.post("/event", json=data)
+        assert json.loads(response.data) == exp_dict
+
     def test_initial_event_no_alert(self, client):
         """Smoke check that no alerts are raised when there are no
         bad events to trigger an alert.
