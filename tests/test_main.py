@@ -169,23 +169,23 @@ class TestMain:
         assert response.status_code == 200
         assert json.loads(response.data) == exp_alert_dict
 
-    # def test_excessive_deposit_amount_outside_period_does_not_alert(self, client):
-    #     exp_dict = {"alert": False, "alert_codes": [], "user_id": 1}
-    #     data = {
-    #         "type": "deposit",
-    #         "amount": f"{EXCESSIVE_DEPOSIT_AMOUNT - 1}",
-    #         "user_id": 1,
-    #         "t": 1
-    #     }
-    #     response = client.post("/event", json=data)
-    #     assert response.status_code == 200
-    #     assert json.loads(response.data) == exp_dict
+    def test_excessive_deposit_amount_outside_period_does_not_alert(self, client):
+        exp_dict = {"alert": False, "alert_codes": [], "user_id": 1}
+        data = {
+            "type": "deposit",
+            "amount": f"{EXCESSIVE_DEPOSIT_AMOUNT - 1}",
+            "user_id": 1,
+            "t": 1
+        }
+        response = client.post("/event", json=data)
+        assert response.status_code == 200
+        assert json.loads(response.data) == exp_dict
 
-    #     data["t"] = EXCESSIVE_DEPOSIT_PERIOD_SECONDS + 5
-    #     data["amount"] = "10.00"
-    #     response = client.post("/event", json=data)
-    #     assert response.status_code == 200
-    #     assert json.loads(response.data) == exp_dict
+        data["t"] = EXCESSIVE_DEPOSIT_PERIOD_SECONDS + 5
+        data["amount"] = "10.00"
+        response = client.post("/event", json=data)
+        assert response.status_code == 200
+        assert json.loads(response.data) == exp_dict
 
     # def test_multiple_alerts(self, client):
     #     # Trigger: CODE_CONSECUTIVE_INCREASING_DEPOSITS
