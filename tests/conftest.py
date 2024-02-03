@@ -1,12 +1,15 @@
 """Stock pytest fixtures to support unit testing of the API Endpoints."""
 import pytest
 
-from src.unusual_activity.main import app as _app
+from src.unusual_activity.main import (
+    create_app,
+    EventStore,
+)
 
 
 @pytest.fixture()
 def app():
-    app = _app
+    app = create_app(EventStore())
     app.config.update({"TESTING": True})
     yield app
 
