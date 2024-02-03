@@ -15,11 +15,11 @@ import json
 import pytest
 
 from src.unusual_activity.constants import (
-    CODE_EXCESSIVE_WITHDRAWL_AMOUNT,
-    CODE_CONSECUTIVE_WITHDRAWLS,
+    CODE_EXCESSIVE_WITHDRAWAL_AMOUNT,
+    CODE_CONSECUTIVE_WITHDRAWALS,
     CODE_CONSECUTIVE_INCREASING_DEPOSITS,
     CODE_EXCESSIVE_DEPOSIT_AMOUNT_IN_PERIOD,
-    EXCESSIVE_WITHDRAWL_AMOUNT,
+    EXCESSIVE_WITHDRAWAL_AMOUNT,
     EXCESSIVE_DEPOSIT_AMOUNT,
     EXCESSIVE_DEPOSIT_PERIOD_SECONDS,
 )
@@ -36,17 +36,17 @@ class TestMain:
         assert response.status_code == 200
         assert json.loads(response.data) == exp_dict
 
-    def test_excessive_withdrawl_alert(self, client):
+    def test_excessive_withdrawal_alert(self, client):
         exp_dict = {
             "alert": True,
             "alert_codes": [
-                CODE_EXCESSIVE_WITHDRAWL_AMOUNT,
+                CODE_EXCESSIVE_WITHDRAWAL_AMOUNT,
             ],
             "user_id": 1
         }
         data = {
-            "type": "withdrawl",
-            "amount": f"{EXCESSIVE_WITHDRAWL_AMOUNT + 1}",
+            "type": "withdrawal",
+            "amount": f"{EXCESSIVE_WITHDRAWAL_AMOUNT + 1}",
             "user_id": 1,
             "t": 1
         }
@@ -54,18 +54,18 @@ class TestMain:
         assert response.status_code == 200
         assert json.loads(response.data) == exp_dict
 
-    def test_consecutive_withdrawls_alert(self, client):
+    def test_consecutive_withdrawals_alert(self, client):
         exp_dict = {"alert": False, "alert_codes": [], "user_id": 1}
         exp_alert_dict = {
             "alert": True,
             "alert_codes": [
-                CODE_CONSECUTIVE_WITHDRAWLS,
+                CODE_CONSECUTIVE_WITHDRAWALS,
             ],
             "user_id": 1
         }
-        # TODO: Refactor to iterate for: CONSECUTIVE_WITHDRAWLS -1,
+        # TODO: Refactor to iterate for: CONSECUTIVE_WITHDRAWALS -1,
         # then explicit check for alert!
-        data = {"type": "withdrawl", "amount": "2.00", "user_id": 1, "t": 1}
+        data = {"type": "withdrawal", "amount": "2.00", "user_id": 1, "t": 1}
         response = client.post("/event", json=data)
         assert response.status_code == 200
         assert json.loads(response.data) == exp_dict
@@ -109,7 +109,7 @@ class TestMain:
     #     assert response.status_code == 200
     #     assert json.loads(response.data) == exp_alert_dict
 
-    # def test_consecutive_increasing_deposits_ignoring_withdrawls_alert(self, client):
+    # def test_consecutive_increasing_deposits_ignoring_withdrawals_alert(self, client):
     #     exp_dict = {"alert": False, "alert_codes": [], "user_id": 1}
     #     exp_alert_dict = {
     #         "alert": True,
@@ -130,11 +130,11 @@ class TestMain:
     #     assert json.loads(response.data) == exp_dict
 
     #     print(
-    #         "Withdrawl's MUST be ignored as part of the: 3 consecutive_"
+    #         "Withdrawal's MUST be ignored as part of the: 3 consecutive_"
     #         "increasing deposits, alert!"
     #     )
-    #     withdrawl_data = {"type": "withdrawl", "amount": "1.00", "user_id": 1, "t": 3}
-    #     response = client.post("/event", json=withdrawl_data)
+    #     withdrawal_data = {"type": "withdrawal", "amount": "1.00", "user_id": 1, "t": 3}
+    #     response = client.post("/event", json=withdrawal_data)
     #     assert response.status_code == 200
     #     assert json.loads(response.data) == exp_dict
 
@@ -212,22 +212,22 @@ class TestMain:
     #     "msg,data,exp_code", (
     #         # 200
     #         ("Good deposit", {"type": "deposit", "amount": "42.00", "user_id": 1, "t": 1} , 200),
-    #         ("Good withdrawl", {"type": "withdrawl", "amount": "40.00", "user_id": 1, "t": 2} , 200),
+    #         ("Good withdrawal", {"type": "withdrawal", "amount": "40.00", "user_id": 1, "t": 2} , 200),
     #         # 400 - Missing Required fields.
     #         ("Empty Body", {} , 400),
     #         ("Missing type", {"amount": "40.00", "user_id": 1, "t": 10} , 400),
-    #         ("Missing amount", {"type": "withdrawl", "user_id": 1, "t": 11} , 400),
-    #         ("Missing user_id", {"type": "withdrawl", "amount": "40.00", "t": 12} , 400),
-    #         ("Missing t", {"type": "withdrawl", "amount": "40.00", "user_id": 1,} , 400),
+    #         ("Missing amount", {"type": "withdrawal", "user_id": 1, "t": 11} , 400),
+    #         ("Missing user_id", {"type": "withdrawal", "amount": "40.00", "t": 12} , 400),
+    #         ("Missing t", {"type": "withdrawal", "amount": "40.00", "user_id": 1,} , 400),
     #         # 400 - Bad types.
     #         ("Bad type type", {"type": None, "amount": "40.00", "user_id": 1, "t": 20} , 400),
-    #         ("Bad amount type", {"type": "withdrawl", "amount": None, "user_id": 1, "t": 21} , 400),
-    #         ("Bad user_id type", {"type": "withdrawl", "amount": "40.00", "user_id": None, "t": 22} , 400),
-    #         ("Bad t type", {"type": "withdrawl", "amount": "40.00", "user_id": 1, "t": None} , 400),
+    #         ("Bad amount type", {"type": "withdrawal", "amount": None, "user_id": 1, "t": 21} , 400),
+    #         ("Bad user_id type", {"type": "withdrawal", "amount": "40.00", "user_id": None, "t": 22} , 400),
+    #         ("Bad t type", {"type": "withdrawal", "amount": "40.00", "user_id": 1, "t": None} , 400),
     #         # 400 - Unexpected Values.
     #         ("Unexpected type", {"type": "unknown", "amount": "40.00", "user_id": 1, "t": 30} , 400),
     #         ("Unexpected amount deposit", {"type": "deposit", "amount": "-40.00", "user_id": 1, "t": 31} , 400),
-    #         ("Unexpected amount withdrawl", {"type": "withdrawl", "amount": "-40.00", "user_id": 1, "t": 32} , 400),
+    #         ("Unexpected amount withdrawal", {"type": "withdrawal", "amount": "-40.00", "user_id": 1, "t": 32} , 400),
     #         ("Unexpected user_id", {"type": "deposit", "amount": "40.00", "user_id": -1, "t": 33} , 400),
     #         ("Unexpected t", {"type": "deposit", "amount": "40.00", "user_id": 1, "t": -34} , 400),
     #     )

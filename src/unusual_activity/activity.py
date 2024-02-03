@@ -28,11 +28,11 @@ def get_alert_state(alert_codes: list[int]) -> bool:
     return True if alert_codes else False
 
 
-def is_withdrawl_amount_excessive(amount: float) -> bool:
+def is_withdrawal_amount_excessive(amount: float) -> bool:
     raise NotImplementedError
 
 
-def is_consecutive_withdrawls(user_id: int) -> bool:
+def is_consecutive_withdrawals(user_id: int) -> bool:
     raise NotImplementedError
 
 

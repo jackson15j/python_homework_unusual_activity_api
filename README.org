@@ -121,7 +121,7 @@ Expected Codes:
 #+NAME: AccountHistory_JSON
 #+BEGIN_EXAMPLE json
   {
-    <t>: {user_id: <int>, type: <deposit/withdrawl>, amount: <float>},
+    <t>: {user_id: <int>, type: <deposit/withdrawal>, amount: <float>},
   }
 #+END_EXAMPLE
 
@@ -135,7 +135,7 @@ Expected Codes:
 - Pro's:
   - =t in AccountHistory= check for =t= uniqueness.
   - =t > list(AccountHistory.keys())[-1]= for increasing check.
-  - Separate =UserAccounts= for quick lookups + deposit/withdrawl
+  - Separate =UserAccounts= for quick lookups + deposit/withdrawal
     changes.
   - Tracking of =last_t= for quick checking for missed transactions.
 - Con's:
@@ -149,7 +149,7 @@ Expected Codes:
     <user_id>: {
       last_t: <t>,
       total: <float>,
-      history/audit: [{t: <int>, type: <deposit/withdrawl>, amount: <float>}, ]
+      history/audit: [{t: <int>, type: <deposit/withdrawal>, amount: <float>}, ]
     },
   }
 #+END_EXAMPLE
@@ -159,7 +159,7 @@ Plus separate global ~last_t = <int>~ in Request Handler.
 - Pro's:
   - =t > last_t= for increasing check.
   - =user_id= as a key for initial uniqueness checks.
-  - Quickly apply deposit/withdrawl changes.
+  - Quickly apply deposit/withdrawal changes.
   - Tracking of =last_t= for quick checking for missed transactions.
   - Historical checks are easier to do than [[*Account History + User Accounts:][Account History + User
     Accounts]], because of the tight data coupling.
@@ -183,7 +183,7 @@ Plus separate global ~last_t = <int>~ in Request Handler.
          UserId int NOT NULL,
          Type varchar(20),
          Amount float,
-         CONSTRAINT CHK_Type CHECK (Type='deposit' OR Type='withdrawl'),
+         CONSTRAINT CHK_Type CHECK (Type='deposit' OR Type='withdrawal'),
          PRIMARY KEY (T),
          FOREIGN KEY (UserId) REFERENCES UserAccount(UserId)
   );

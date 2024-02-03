@@ -6,10 +6,10 @@ from flask import (
 )
 
 from src.unusual_activity.constants import (
-    CODE_EXCESSIVE_WITHDRAWL_AMOUNT,
-    CODE_CONSECUTIVE_WITHDRAWLS,
-    EXCESSIVE_WITHDRAWL_AMOUNT,
-    CONSECUTIVE_WITHDRAWLS,
+    CODE_EXCESSIVE_WITHDRAWAL_AMOUNT,
+    CODE_CONSECUTIVE_WITHDRAWALS,
+    EXCESSIVE_WITHDRAWAL_AMOUNT,
+    CONSECUTIVE_WITHDRAWALS,
 )
 
 
@@ -23,12 +23,12 @@ class EventStore:
     def add_event(self, event: dict) -> None:
         self.db.append(event)
 
-    def has_consecutive_withdrawls(self, user_id: int) -> bool:
+    def has_consecutive_withdrawals(self, user_id: int) -> bool:
         user_recs = [x for x in self.db if x["user_id"] == user_id]
-        last_recs = user_recs[-CONSECUTIVE_WITHDRAWLS:]
-        if len(last_recs) < CONSECUTIVE_WITHDRAWLS:
+        last_recs = user_recs[-CONSECUTIVE_WITHDRAWALS:]
+        if len(last_recs) < CONSECUTIVE_WITHDRAWALS:
             return False
-        return all(x for x in last_recs if x["type"] == "withdrawl")
+        return all(x for x in last_recs if x["type"] == "withdrawal")
 
 
 def create_app(event_store: EventStore):
@@ -57,11 +57,11 @@ def create_app(event_store: EventStore):
 
         ## Stateless validation checks:
 
-        if _has_excessive_withdrawl_amount(amount):
-            alert_codes.append(CODE_EXCESSIVE_WITHDRAWL_AMOUNT)
+        if _has_excessive_withdrawal_amount(amount):
+            alert_codes.append(CODE_EXCESSIVE_WITHDRAWAL_AMOUNT)
 
-        if event_store.has_consecutive_withdrawls(req["user_id"]):
-            alert_codes.append(CODE_CONSECUTIVE_WITHDRAWLS)
+        if event_store.has_consecutive_withdrawals(req["user_id"]):
+            alert_codes.append(CODE_CONSECUTIVE_WITHDRAWALS)
 
 
         # TODO: Parse JSON body.
@@ -82,7 +82,7 @@ def create_app(event_store: EventStore):
 
 
 
-def _has_excessive_withdrawl_amount(amount: str) -> bool:
-    # Validate excessive withdrawl amount:
+def _has_excessive_withdrawal_amount(amount: str) -> bool:
+    # Validate excessive withdrawal amount:
     _amount = float(amount)
-    return _amount > EXCESSIVE_WITHDRAWL_AMOUNT
+    return _amount > EXCESSIVE_WITHDRAWAL_AMOUNT
